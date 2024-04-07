@@ -22,6 +22,7 @@ public:
     JSONValue(const JSONValue&);
     JSONValue& operator=(const JSONValue&);
     JSONValue(const std::string);
+    JSONValue(const double&);
     std::string getStringValue();
     bool getBooleanValue();
     double getNumberValue();
@@ -30,6 +31,14 @@ public:
     int FindKeyIndex(const std::string&);
     JSONValue& operator[](int);
     JSONValue& operator[](const std::string&);
+    JSONValue& setNumber(const double);
+    JSONValue& setString(const std::string&);
+    JSONValue& setBoolean(const bool);
+    JSONValue& setObject(const Object&);
+    JSONValue& operator=(const Object&);
+    JSONValue& pushBack(const JSONValue&);
+    JSONValue& setPair(const std::string&, const JSONValue&);
+    const std::string* getKeys();
     ~JSONValue();
 };
 
@@ -44,11 +53,15 @@ private:
 public:
     Object(const std::string JSONString);
     Object(const Object& rhs);
+    Object(bool);
     Object& operator=(const Object&);
     std::ostream& Print(std::ostream&);
     int FindKeyIndex(const std::string&);
     JSONValue& operator[](int);
     JSONValue& operator[](const std::string&);
+    Object& pushBack(const JSONValue&);
+    Object& setPair(const std::string&, const JSONValue&);
+    const std::string* getKeys();
     ~Object();
 };
 

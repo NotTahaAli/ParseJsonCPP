@@ -106,6 +106,11 @@ JSONValue::JSONValue(const JSONValue &rhs)
     }
 }
 
+JSONValue::JSONValue(const double& num) {
+    type = Number;
+    numberVal = num;
+}
+
 JSONValue &JSONValue::operator=(const JSONValue &rhs)
 {
     if (this == &rhs)
@@ -133,6 +138,71 @@ JSONValue &JSONValue::operator=(const JSONValue &rhs)
         objectVal = new Object(*rhs.objectVal);
     }
     return *this;
+}
+
+JSONValue &JSONValue::setNumber(const double num)
+{
+    if (type == JSONObject)
+    {
+        delete objectVal;
+    }
+    else if (type == String)
+    {
+        delete stringVal;
+    }
+    type = Number;
+    numberVal = num;
+    return *this;
+}
+
+JSONValue &JSONValue::setString(const string &str)
+{
+    if (type == JSONObject)
+    {
+        delete objectVal;
+    }
+    else if (type == String)
+    {
+        delete stringVal;
+    }
+    type = String;
+    stringVal = new string(str);
+    return *this;
+}
+
+JSONValue &JSONValue::setBoolean(const bool boolean)
+{
+    if (type == JSONObject)
+    {
+        delete objectVal;
+    }
+    else if (type == String)
+    {
+        delete stringVal;
+    }
+    type = Boolean;
+    numberVal = boolean;
+    return *this;
+}
+
+JSONValue &JSONValue::operator=(const Object &obj)
+{
+    if (type == JSONObject)
+    {
+        delete objectVal;
+    }
+    else if (type == String)
+    {
+        delete stringVal;
+    }
+    type = JSONObject;
+    objectVal = new Object(obj);
+    return *this;
+}
+
+JSONValue &JSONValue::setObject(const Object &obj)
+{
+    return (*this = obj);
 }
 
 JSONValue::~JSONValue()
@@ -191,22 +261,28 @@ ostream &JSONValue::printObjectValue(ostream &out)
     return out;
 }
 
-JSONValue& JSONValue::operator[](int index) {
-    if (type != JSONObject) {
+JSONValue &JSONValue::operator[](int index)
+{
+    if (type != JSONObject)
+    {
         throw invalid_argument("Value is not an object");
     }
     return objectVal->operator[](index);
 }
 
-int JSONValue::FindKeyIndex(const string& key) {
-    if (type != JSONObject) {
+int JSONValue::FindKeyIndex(const string &key)
+{
+    if (type != JSONObject)
+    {
         throw invalid_argument("Value is not an object");
     }
     return objectVal->FindKeyIndex(key);
 }
 
-JSONValue& JSONValue::operator[](const string& key) {
-    if (type != JSONObject) {
+JSONValue &JSONValue::operator[](const string &key)
+{
+    if (type != JSONObject)
+    {
         throw invalid_argument("Value is not an object");
     }
     return objectVal->operator[](key);
@@ -419,10 +495,12 @@ Object::Object(const string JSONString)
                     values = newArr;
                     valStart = i + 1;
                     delete[] splitVals;
+                    splitVals = nullptr;
                 }
                 catch (const std::exception &e)
                 {
-                    delete[] splitVals;
+                    if (splitVals)
+                        delete[] splitVals;
                     throw;
                 }
             }
@@ -462,10 +540,12 @@ Object::Object(const string JSONString)
             newArr[size++] = new JSONValue(tempVal);
             values = newArr;
             delete[] splitVals;
+            splitVals = nullptr;
         }
         catch (const std::exception &e)
         {
-            delete[] splitVals;
+            if (splitVals)
+                delete[] splitVals;
             throw;
         }
         return;
@@ -503,6 +583,14 @@ Object::Object(const Object &rhs)
         keys = nullptr;
         values = nullptr;
     }
+}
+
+Object::Object(bool _hasKeys)
+{
+    size = 0;
+    hasKeys = _hasKeys;
+    keys = nullptr;
+    values = nullptr;
 }
 
 Object &Object::operator=(const Object &rhs)
@@ -545,27 +633,34 @@ Object &Object::operator=(const Object &rhs)
     return *this;
 }
 
-JSONValue& Object::operator[](int index) {
+JSONValue &Object::operator[](int index)
+{
     if (index < 0 || index >= size)
         throw invalid_argument("Index out of range");
     return *values[index];
 }
 
-int Object::FindKeyIndex(const string& key) {
-    if (!hasKeys) {
+int Object::FindKeyIndex(const string &key)
+{
+    if (!hasKeys)
+    {
         throw invalid_argument("Object is an array.");
     }
-    for (int i = 0; i < size; i++) {
-        if (keys[i].compare(key) == 0) {
+    for (int i = 0; i < size; i++)
+    {
+        if (keys[i].compare(key) == 0)
+        {
             return i;
         }
     }
     return -1;
 }
 
-JSONValue& Object::operator[](const string& key) {
+JSONValue &Object::operator[](const string &key)
+{
     int index = FindKeyIndex(key);
-    if (index == -1) {
+    if (index == -1)
+    {
         throw invalid_argument("Key Not Found in object");
     }
     return *values[index];
@@ -612,4 +707,87 @@ std::ostream &Object::Print(std::ostream &out)
 std::ostream &operator<<(std::ostream &out, Object &val)
 {
     return val.Print(out);
+}
+
+JSONValue &JSONValue::pushBack(const JSONValue &val)
+{
+    if (type != JSONObject)
+    {
+        throw invalid_argument("Value is not an object");
+    }
+    objectVal->pushBack(val);
+    return *this;
+}
+JSONValue &JSONValue::setPair(const string &key, const JSONValue &val)
+{
+    if (type != JSONObject)
+    {
+        throw invalid_argument("Value is not an object");
+    }
+    objectVal->setPair(key, val);
+    return *this;
+}
+const string *JSONValue::getKeys()
+{
+    if (type != JSONObject)
+    {
+        throw invalid_argument("Value is not an object");
+    }
+    return objectVal->getKeys();
+}
+
+Object &Object::pushBack(const JSONValue &val)
+{
+    if (hasKeys)
+    {
+        throw invalid_argument("Object is not an array");
+    }
+    JSONValue **newValArr = new JSONValue *[size + 1];
+    for (int i = 0; i < size; i++)
+    {
+        newValArr[i] = values[i];
+    }
+    delete[] values;
+    values = newValArr;
+    values[size] = new JSONValue(val);
+    return *this;
+    return *this;
+}
+
+Object &Object::setPair(const string &key, const JSONValue &val)
+{
+    if (!hasKeys)
+    {
+        throw invalid_argument("Object is an array");
+    }
+    int index = FindKeyIndex(key);
+    if (index != -1)
+    {
+        delete values[index];
+        values[index] = new JSONValue(val);
+        return *this;
+    }
+    string *newKeyArr = new string[size + 1];
+    JSONValue **newValArr = new JSONValue *[size + 1];
+    for (int i = 0; i < size; i++)
+    {
+        newKeyArr[i] = keys[i];
+        newValArr[i] = values[i];
+    }
+    delete[] keys;
+    delete[] values;
+    newValArr[size] = new JSONValue(val);
+    newKeyArr[size++] = key;
+    values = newValArr;
+    keys = newKeyArr;
+    return *this;
+}
+
+const string *Object::getKeys()
+{
+    if (!hasKeys)
+    {
+        throw invalid_argument("Object is an array");
+    }
+    return keys;
 }
