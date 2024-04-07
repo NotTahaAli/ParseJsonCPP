@@ -749,8 +749,7 @@ Object &Object::pushBack(const JSONValue &val)
     }
     delete[] values;
     values = newValArr;
-    values[size] = new JSONValue(val);
-    return *this;
+    values[size++] = new JSONValue(val);
     return *this;
 }
 
