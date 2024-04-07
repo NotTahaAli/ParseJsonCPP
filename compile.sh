@@ -1,0 +1,1 @@
+g++ test.cpp Object.cpp Helper.cpp -o test

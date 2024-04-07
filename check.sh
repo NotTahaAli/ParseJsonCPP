@@ -1,0 +1,1 @@
+bash compile.sh && valgrind --leak-check=yes ./test
