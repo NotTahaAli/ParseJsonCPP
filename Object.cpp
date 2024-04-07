@@ -676,7 +676,7 @@ std::ostream &operator<<(std::ostream &out, JSONValue &val)
     }
     if (type == Boolean)
     {
-        out << val.getBooleanValue();
+        out << ((val.getBooleanValue()) ? "true":"false");
         return out;
     }
     if (type == String)
