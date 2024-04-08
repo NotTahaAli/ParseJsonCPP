@@ -41,6 +41,22 @@ int main() {
     {
         cout << "Error Occured: " << e.what() << endl;
     }
+
+    cout << endl << endl << "After a.pushBack(JSONValue(0).setString(\"Hello World\"));" << endl;
+    a.pushBack(JSONValue(0).setString("Hello World"));
+    cout << "a => " << a << endl;
+
+    cout << endl << endl << "After a[2].setPair(\"Enabled\", JSONValue(0).setBoolean(false));" << endl;
+    a[2].setPair("Enabled", JSONValue(0).setBoolean(false));
+    cout << "a => " << a << endl;
     
+    cout << endl << endl << "After a[2].setPair(\"Enabled\", JSONValue(0).setBoolean(true));" << endl;
+    a[2].setPair("Enabled", JSONValue(0).setBoolean(true));
+    cout << "a => " << a << endl;
+
+    cout << endl << endl << "After a[2][\"Enabled\"].setString(\"Not Enabled\");" << endl;
+    a[2]["Enabled"].setString("Not Enabled");
+    cout << "a => " << a << endl;
+
     return 0;
 }

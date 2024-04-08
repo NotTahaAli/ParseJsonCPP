@@ -181,7 +181,7 @@ JSONValue &JSONValue::setBoolean(const bool boolean)
         delete stringVal;
     }
     type = Boolean;
-    numberVal = boolean;
+    booleanVal = boolean;
     return *this;
 }
 
