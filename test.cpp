@@ -3,7 +3,7 @@
 using namespace std;
 
 int main() {
-    JSONValue a("[[], {}, {\"A\":[1,2,\"Taha\"]}]");
+    JSONValue a("[[], null, {\"A\":[1,2,\"Taha\"]}]");
     cout << "a => " << a << endl;
     cout << "a[0] => " << a[0] << endl;
     cout << "a[1] => " << a[1] << endl;
@@ -42,16 +42,20 @@ int main() {
         cout << "Error Occured: " << e.what() << endl;
     }
 
-    cout << endl << endl << "After a.pushBack(JSONValue(0).setString(\"Hello World\"));" << endl;
-    a.pushBack(JSONValue(0).setString("Hello World"));
+    cout << endl << endl << "After a[1].setObject(Object(true).setPair(\"Value\", JSONValue()));" << endl;
+    a[1].setObject(Object(true).setPair("Value", JSONValue()));
     cout << "a => " << a << endl;
 
-    cout << endl << endl << "After a[2].setPair(\"Enabled\", JSONValue(0).setBoolean(false));" << endl;
-    a[2].setPair("Enabled", JSONValue(0).setBoolean(false));
+    cout << endl << endl << "After a.pushBack(JSONValue().setString(\"Hello World\"));" << endl;
+    a.pushBack(JSONValue().setString("Hello World"));
+    cout << "a => " << a << endl;
+
+    cout << endl << endl << "After a[2].setPair(\"Enabled\", JSONValue().setBoolean(false));" << endl;
+    a[2].setPair("Enabled", JSONValue().setBoolean(false));
     cout << "a => " << a << endl;
     
-    cout << endl << endl << "After a[2].setPair(\"Enabled\", JSONValue(0).setBoolean(true));" << endl;
-    a[2].setPair("Enabled", JSONValue(0).setBoolean(true));
+    cout << endl << endl << "After a[2].setPair(\"Enabled\", JSONValue().setBoolean(true));" << endl;
+    a[2].setPair("Enabled", JSONValue().setBoolean(true));
     cout << "a => " << a << endl;
 
     cout << endl << endl << "After a[2][\"Enabled\"].setString(\"Not Enabled\");" << endl;

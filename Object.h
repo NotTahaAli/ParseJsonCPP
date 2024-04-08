@@ -2,6 +2,7 @@
 #include <string>
 
 enum ValueType {
+    Null,
     Number,
     Boolean,
     String,
@@ -22,7 +23,7 @@ public:
     JSONValue(const JSONValue&);
     JSONValue& operator=(const JSONValue&);
     JSONValue(const std::string);
-    JSONValue(const double&);
+    JSONValue();
     std::string getStringValue();
     bool getBooleanValue();
     double getNumberValue();
@@ -31,6 +32,7 @@ public:
     int FindKeyIndex(const std::string&);
     JSONValue& operator[](int);
     JSONValue& operator[](const std::string&);
+    JSONValue& setNull();
     JSONValue& setNumber(const double);
     JSONValue& setString(const std::string&);
     JSONValue& setBoolean(const bool);

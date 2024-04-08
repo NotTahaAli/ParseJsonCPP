@@ -25,6 +25,11 @@ JSONValue::JSONValue(const string valueStr)
         booleanVal = false;
         return;
     }
+    if (tempString.compare("null") == 0)
+    {
+        type = Null;
+        return;
+    }
     if (tempString[0] == '"')
     {
         type = String;
@@ -106,15 +111,24 @@ JSONValue::JSONValue(const JSONValue &rhs)
     }
 }
 
-JSONValue::JSONValue(const double& num) {
-    type = Number;
-    numberVal = num;
+JSONValue::JSONValue()
+{
+    type = Null;
 }
 
 JSONValue &JSONValue::operator=(const JSONValue &rhs)
 {
     if (this == &rhs)
         return *this;
+    if (type == String)
+    {
+        delete stringVal;
+    }
+    else if (type == JSONObject)
+    {
+        delete objectVal;
+    }
+
     type = rhs.type;
     if (type == Boolean)
     {
@@ -128,15 +142,27 @@ JSONValue &JSONValue::operator=(const JSONValue &rhs)
     }
     if (type == String)
     {
-        delete stringVal;
         stringVal = new string(*rhs.stringVal);
         return *this;
     }
     if (type == JSONObject)
     {
-        delete objectVal;
         objectVal = new Object(*rhs.objectVal);
     }
+    return *this;
+}
+
+JSONValue &JSONValue::setNull()
+{
+    if (type == JSONObject)
+    {
+        delete objectVal;
+    }
+    else if (type == String)
+    {
+        delete stringVal;
+    }
+    type = Null;
     return *this;
 }
 
@@ -669,6 +695,11 @@ JSONValue &Object::operator[](const string &key)
 std::ostream &operator<<(std::ostream &out, JSONValue &val)
 {
     ValueType type = val.getValueType();
+    if (type == Null)
+    {
+        out << "null";
+        return out;
+    }
     if (type == Number)
     {
         out << val.getNumberValue();
@@ -676,7 +707,7 @@ std::ostream &operator<<(std::ostream &out, JSONValue &val)
     }
     if (type == Boolean)
     {
-        out << ((val.getBooleanValue()) ? "true":"false");
+        out << ((val.getBooleanValue()) ? "true" : "false");
         return out;
     }
     if (type == String)
